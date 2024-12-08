@@ -27,12 +27,40 @@ pub mod voting{
                                 candidate_name: String,
                                 _poll_id: u64) -> Result<()>{
         let candidate = &mut ctx.accounts.candidate;
+        let poll = &mut ctx.accounts.poll;
+        poll.candidate_amount += 1;
         candidate.candidate_name = candidate_name;
         candidate.candidate_votes = 0;
         Ok(())                       
     }
 
+    pub fn vote(ctx: Context<Vote>, _candidate_name: String, _poll_id: u64) -> Result<()> {
+        let candidate = &mut ctx.accounts.candidate;
+        candidate.candidate_votes += 1;
+        Ok(())
+    }
+
 }
+
+#[derive(Accounts)]
+#[instruction(candidate_name: String, poll_id: u64)]
+pub struct Vote<'info>{
+    pub signer: Signer<'info>, // cuz someone has ot pay for it
+
+    #[account( // this is the poll
+        seeds = [poll_id.to_le_bytes().as_ref()],
+        bump
+    )]
+    pub poll: Account<'info, Poll>,
+
+    //Candidate
+    #[account( 
+        seeds = [poll_id.to_le_bytes().as_ref(), candidate_name.as_bytes()],      // PDA seeds for the account
+        bump,
+    )]
+    pub candidate: Account<'info, Candidate>,
+}
+
 
 //make sure have the same order
 #[derive(Accounts)]
