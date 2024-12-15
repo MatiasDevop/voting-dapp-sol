@@ -100,7 +100,7 @@ describe('voting', () => {
   
       const smoothCandidate = await votingProgram.account.candidate.fetch(smoothAddress);
       console.log(smoothCandidate);
-      expect(smoothCandidate.candidateVotes.toNumber()).toEqual(1);
+      expect(smoothCandidate.candidateVotes.toNumber()).toEqual(1);//1:46
   });
 
 })
