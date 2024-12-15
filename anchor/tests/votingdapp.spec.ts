@@ -1,7 +1,7 @@
 import * as anchor from '@coral-xyz/anchor'
-import {Program} from '@coral-xyz/anchor'
-import {Keypair, PublicKey} from '@solana/web3.js'
-import {Voting} from '../target/types/voting'
+import { Program } from '@coral-xyz/anchor'
+import { Keypair, PublicKey } from '@solana/web3.js'
+import { Voting } from '../target/types/voting'
 //import { Voting } from 'anchor/target/types/voting';
 import { BankrunProvider, startAnchor } from 'anchor-bankrun';
 
@@ -10,26 +10,26 @@ const IDL = require('../target/idl/voting.json');
 const votingAddress = new PublicKey("AsjZ3kWAUSQRNt2pZVeJkywhZ6gpLpHZmJjduPmKZDZZ");
 
 describe('voting', () => {
-  
+
   let context;
   let provider;
   let votingProgram: any;
 
-  beforeAll(async () =>{
-    context = await startAnchor("", [{ name: "voting", programId: votingAddress}], []);  
+  beforeAll(async () => {
+    context = await startAnchor("", [{ name: "voting", programId: votingAddress }], []);
     provider = new BankrunProvider(context);
-    
-      votingProgram = new Program<Voting>(
+
+    votingProgram = new Program<Voting>(
       IDL,
       provider
     );
-     
+
   })
-  
+
   it('Initialize Poll', async () => {
-    context = await startAnchor("", [{ name: "voting", programId: votingAddress}], []);  
+    context = await startAnchor("", [{ name: "voting", programId: votingAddress }], []);
     provider = new BankrunProvider(context);
-    
+
     votingProgram = new Program<Voting>(
       IDL,
       provider
@@ -41,7 +41,7 @@ describe('voting', () => {
       new anchor.BN(1732451557
       )
     ).rpc();
-    
+
     const [pollAddress] = PublicKey.findProgramAddressSync(
       [new anchor.BN(1).toArrayLike(Buffer, 'le', 8)],
       votingAddress
@@ -57,7 +57,7 @@ describe('voting', () => {
 
   });
 
-  it("initialize candidate", async() => {
+  it("initialize candidate", async () => {
     await votingProgram.methods.initializeCandidate(
       "Smooth",
       new anchor.BN(1)
@@ -65,12 +65,12 @@ describe('voting', () => {
     await votingProgram.methods.initializeCandidate(
       "Crunchy",
       new anchor.BN(1)
-    ).rpc();  
+    ).rpc();
 
     const [crunchyAddress] = PublicKey.findProgramAddressSync(
       [new anchor.BN(1).toArrayLike(Buffer, 'le', 8), Buffer.from("Crunchy")],
       votingAddress
-    );  
+    );
 
     const crunchyCandidate = await votingProgram.account.candidate.fetch(crunchyAddress);
     console.log(crunchyCandidate);
@@ -79,28 +79,28 @@ describe('voting', () => {
     const [smoothAddress] = PublicKey.findProgramAddressSync(
       [new anchor.BN(1).toArrayLike(Buffer, 'le', 8), Buffer.from("Smooth")],
       votingAddress
-    );  
+    );
 
     const smoothCandidate = await votingProgram.account.candidate.fetch(smoothAddress);
     console.log(smoothCandidate);
 
   });
 
-  it("vote", async() => {
+  it("vote", async () => {
     await votingProgram.methods
       .vote("Smooth",
         new anchor.BN(1)
       )
-      .rpc()
+      .rpc();
 
-      const [smoothAddress] = PublicKey.findProgramAddressSync(
-        [new anchor.BN(1).toArrayLike(Buffer, 'le', 8), Buffer.from("Smooth")],
-        votingAddress
-      );  
-  
-      const smoothCandidate = await votingProgram.account.candidate.fetch(smoothAddress);
-      console.log(smoothCandidate);
-      expect(smoothCandidate.candidateVotes.toNumber()).toEqual(1);//1:46
+    const [smoothAddress] = PublicKey.findProgramAddressSync(
+      [new anchor.BN(1).toArrayLike(Buffer, 'le', 8), Buffer.from("Smooth")],
+      votingAddress
+    );
+
+    const smoothCandidate = await votingProgram.account.candidate.fetch(smoothAddress);
+    console.log(smoothCandidate);
+    expect(smoothCandidate.candidateVotes.toNumber()).toEqual(1);//1:49 error MUTABLE
   });
 
 })
