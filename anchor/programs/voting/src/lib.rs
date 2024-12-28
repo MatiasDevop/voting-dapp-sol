@@ -57,6 +57,7 @@ pub struct Vote<'info>{
 
     //Candidate
     #[account( 
+        mut,
         seeds = [poll_id.to_le_bytes().as_ref(), candidate_name.as_bytes()],      // PDA seeds for the account
         bump,
     )]
@@ -72,6 +73,7 @@ pub struct InitializeCandidate<'info>{
     pub signer: Signer<'info>, // cuz someone has ot pay for it
 
     #[account( // this is the poll
+        mut,
         seeds = [poll_id.to_le_bytes().as_ref()],
         bump
     )]
