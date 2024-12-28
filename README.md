@@ -92,3 +92,6 @@ Build the web app
 ```shell
 pnpm build
 ```
+
+```shell
+anchor test --skip-local-validator --skip-deploy
