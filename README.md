@@ -95,3 +95,25 @@ pnpm build
 
 ```shell
 anchor test --skip-local-validator --skip-deploy
+
+# to deploy first set config ->
+solana config get
+solana config set -ul
+anchor deploy
+
+```
+
+# if you have errors follow this
+
+solana config get
+solana-keygen new -o /Users/nestormatias/.config/solana/id.json
+solana config set --keypair /Users/nestormatias/.config/solana/id.json
+anchor deploy
+
+# if error for balance try to add sol to your balance
+
+solana balance
+solana airdrop 2 HdWmAV2Zv4vm7KsaHrVysGRk2b8YQXMPHCTzP7BaPsx6
+anchor deploy
+
+then check your contract use Program ID in sol explorer
